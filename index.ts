@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const Cesium = require('cesium');
 import * as proj4 from 'proj4';
 import * as yargs from 'yargs';

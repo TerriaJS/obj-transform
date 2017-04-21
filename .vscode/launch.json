@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceRoot}\\bin\\index.js",
+            "outFiles": [],
+            "protocol": "inspector",
+            "args": [
+                "--sourceFile", "C:\\Users\\rin035\\Downloads\\Sydney_Basin_Test_100k_MGAz55\\Sydney_Basin_Test_100k_MGAz55.obj",
+                "--targetFile", "test.obj",
+                "--sourceProjection", "+proj=utm +zone=55 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+                "--targetProjection", "ECEF"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Port",
+            "address": "localhost",
+            "port": 5858,
+            "outFiles": []
+        }
+    ]
+}

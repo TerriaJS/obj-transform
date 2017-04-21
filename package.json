@@ -1,0 +1,25 @@
+{
+  "name": "obj-transform",
+  "version": "1.0.0",
+  "description": "Transforms coordinates in an OBJ model file",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@types/event-stream": "^3.3.31",
+    "@types/yargs": "^6.6.0",
+    "cesium": "^1.32.1",
+    "event-stream": "^3.3.4",
+    "fs-extra": "^2.1.2",
+    "proj4": "^2.4.3",
+    "typescript": "^2.2.2",
+    "yargs": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^2.1.0",
+    "@types/proj4": "^2.3.4"
+  }
+}

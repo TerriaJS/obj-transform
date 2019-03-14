@@ -29,19 +29,25 @@ const argv = yargs
     .option('targetProjection', {
         demandOption: true,
         default: 'WGS84',
-        describe: 'The projection of the source OBJ file.  This can be any PROJ4 string or "ECEF" for Earth-centered, Earth-fixed Cartesian coordinates.',
+        describe: 'The projection of the source OBJ file.  This can be any PROJ4 string, "ECEF" for Earth-centered, Earth-fixed Cartesian coordinates, or "ENU" for a local east-north-up coordinate system centered at the first vertex.',
         type: 'string'
     })
     .argv;
 
-const sourceProjection = argv.sourceProjection === 'ECEF' ? 'WGS84' : argv.sourceProjection;
-const targetProjection = argv.targetProjection === 'ECEF' ? 'WGS84' : argv.targetProjection;
+const sourceProjection = argv.sourceProjection === 'ECEF' || argv.sourceProjection === 'ENU'  ? 'WGS84' : argv.sourceProjection;
+const targetProjection = argv.targetProjection === 'ECEF' || argv.targetProjection === 'ENU' ? 'WGS84' : argv.targetProjection;
+
+console.log('Source: ' + sourceProjection);
+console.log('Target: ' + targetProjection);
 const conversion = proj4(sourceProjection, targetProjection);
 
 const cartesian3Scratch = new Cartesian3();
 const cartographicScratch = new Cartographic();
 
 const vertexPattern = /v( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)( +[\d|\.|\+|\-|e|E]+)/;
+
+let center: any;
+let transform: any;
 
 const out = fsExtra.openSync(argv.targetFile, 'w');
 readLines(argv.sourceFile, function(line) {
@@ -68,6 +74,24 @@ readLines(argv.sourceFile, function(line) {
             converted[0] = cartesian.x;
             converted[1] = cartesian.z;
             converted[2] = -cartesian.y;
+        } else if (argv.targetProjection === 'ENU') {
+            const cartesian = Cartesian3.fromDegrees(converted[0], converted[1], converted[2], Ellipsoid.WGS84, cartesian3Scratch);
+
+            if (!center) {
+                console.log(converted.join(','));
+                center = Cesium.Cartesian3.clone(cartesian);
+                const enuToFixed = Cesium.Transforms.eastNorthUpToFixedFrame(center);
+                transform = Cesium.Matrix4.inverseTransformation(enuToFixed, new Cesium.Matrix4());
+            }
+
+            Cesium.Matrix4.multiplyByPoint(transform, cartesian, cartesian);
+
+            converted[0] = cartesian.x;
+            converted[1] = cartesian.y;
+            converted[2] = cartesian.z;
+            // converted[0] = cartesian.x;
+            // converted[1] = cartesian.z;
+            // converted[2] = -cartesian.y;
         }
 
         line = 'v ' + converted.join(' ')
